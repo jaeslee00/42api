@@ -48,21 +48,22 @@ class FT_API(object):
     def Authenticate(self):
         if self.req_code:
             auth_data = {
-                'grant_type':'authorization_code',
-                'client_id': self.uid,
-                'client_secret': self.secret,
-                'code': self.req_code,
-                'redirect_uri':self.redirect    
-            }
+                            'grant_type':'authorization_code',
+                            'client_id': self.uid,
+                            'client_secret': self.secret,
+                            'code': self.req_code,
+                            'redirect_uri':self.redirect    
+                        }
         else:
             auth_data = {
-                'grant_type':'client_credentials',
-                'client_id': self.uid,
-                'client_secret': self.secret
-            }
+                            'grant_type':'client_credentials',
+                            'client_id': self.uid,
+                            'client_secret': self.secret
+                        }
+
         resp = req.post("https://api.intra.42.fr/oauth/token", data=auth_data)
         resp.raise_for_status()
-        parsed_resp = json.loads(resp.content.decode('utf-8'))
+        parsed_resp = resp.json()
         print(parsed_resp['access_token'])
         print(parsed_resp['expires_in'])
         return (parsed_resp['access_token'])
