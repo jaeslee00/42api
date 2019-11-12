@@ -24,16 +24,20 @@ class HttpRequest(object):
 
     def Put(self, data):
         # resp = self.session.put()
+        resp.raise_for_status()
         pass
     def Post(self, data):
         # resp = self.session.post()
+        resp.raise_for_status()
         pass
 
     def PATCH(self, data):
         # resp = self.session.patch()
+        resp.raise_for_status()
         pass
 
     def DELETE(self):
         # resp = self.session.delete()
+        resp.raise_for_status()
         pass
 
