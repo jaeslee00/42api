@@ -18,7 +18,7 @@ class HttpRequest(object):
         pass
 
     def Get(self):
-        resp = self.session.get(self.url + self.ParseParam())
+        # resp = self.session.get()
         resp.raise_for_status()
         
 
