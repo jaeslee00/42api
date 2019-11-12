@@ -15,6 +15,8 @@ POST, PUT, GET, PATCH, DELETE = (
     'POST', 'PUT', 'GET', 'PATCH', 'DELETE'
 )
 
+
+
 def get_code(uid:str, secret:str):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.bind((HOST, PORT))
@@ -23,7 +25,7 @@ def get_code(uid:str, secret:str):
         connection, address = s.accept()
         with connection:
             print('Connected by', address)
-            data = connection.recv(256)
+            data = connection.recv(128)
             if not data:
                 return None
             else:
@@ -68,18 +70,23 @@ class FT_API(object):
         print(parsed_resp['expires_in'])
         return (parsed_resp['access_token'])
 
-    # def api_example(self, id=None, **kwargs):
-    #     return HttpRequest(target, self.session, **kwargs)
+    def api_example(self, id=None, **kwargs):
+        return HttpRequest(target, self.session, **kwargs)
 
 def main():
     uid = None
     secret = None
     redir_uri = None
+    req_code = None
     uid = input("UID = ")
     secret = input("42SECRET = ")
     if uid is None or secret is None:
          sys.exit()
     user = input("are you 'anonymous' or 'authenticated' user? > ")
+    if user != 'authenticated':
+        if user != 'anonymous':
+            print("wrong user input")
+            sys.exit()
     if user == 'authenticated':
         print("Please log-in to intranet and send request to 'REDIRECT URI' in your api setting")
         redir_uri = input("REDIRECTION_URI = ")
@@ -88,8 +95,6 @@ def main():
     api = FT_API(uid, secret, req_code, redir_uri)
     print("auth successfullly finished")
     
-
-
     
     """
     curl -F grant_type=authorization_code -F client_id=uid -F client_secret=secret \
