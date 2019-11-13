@@ -12,10 +12,28 @@ class HttpRequest(object):
     def __init__(self, target, session, **kwargs):
         self.url = f"https://api.intra.42.fr/{target}"
         self.session = session
+        self.filter = kwargs['filters'] if 'filter' in kwargs else {}
+        self.page = kwargs['pages'] if 'pages' in kwargs else {'size': 100, 'number': 1}
+        self.sort = kwargs['sort'] if 'sort' in kwargs else ''
         # Needs to handle kwargs into different parameters
 
     def ParseParam(self)
-        pass
+        if self.filter:
+            filtering = '&'.join([f'filter[{key}]={value}' for key, value in self.filter.items()])
+        else:
+            filtering = ''
+        if self.pagination:
+            pagination = '&'.join([f'page[{key}]={value}' for key, value in self.page.items()])
+        else:
+            pagination = ''
+        parsed_param = filtering + pagination
+        if self.sort:
+            parsed_param += f'&sort={self.sort}'
+        else:
+            parsed_param += f'sort={self.sort}'
+        
+        
+        
 
     def Get(self):
         # resp = self.session.get()
