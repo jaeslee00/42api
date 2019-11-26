@@ -21,7 +21,7 @@ CAMPUS = '1' # 1 = France 2 = USA .... x = KOREA
 #         with connection:
 #             print('Connected by', address)
 #             data = connection.recv(128)
-#             if not data:    
+#             if not data:
 #                 return None
 #             else:
 #                 return (str(data).split(' ')[1][7:])
@@ -29,7 +29,7 @@ CAMPUS = '1' # 1 = France 2 = USA .... x = KOREA
 def auth():
     uid = None
     secret = None
-    with open("/Users/jaelee/42/api_auth.txt", 'r') as file:
+    with open("/Users/jaeslee/auth.txt", 'r') as file:
         uid = file.readline()[0:-1]
         secret = file.readline()[0:-1]
     return uid, secret
@@ -39,7 +39,7 @@ class HttpRequest(object):
     def __init__(self, target:str, session, **kwargs):
         self.url = f"{ENDPOINT}{target}"
         self.session = session
-        if filter in kwargs:
+        if "filter" in kwargs:
             self.filter = kwargs["filter"]
         else:
             self.filter = {}
@@ -54,7 +54,7 @@ class HttpRequest(object):
         # Needs to handle kwargs into different parameters
     def parseParams(self):
         if self.filter:
-            filtering = '&'.join([f"filter[{key}]={value}" for key, value in self.filter.items()])
+            filtering = '&'.join([f"filter[{key}]={value}" for key, value in self.filter.items()]) + '&'
         else:
             filtering = ""
         if self.page:
@@ -93,7 +93,7 @@ class HttpRequest(object):
 
 
 class FT_API(object):
-    
+
     def __init__(self, uid:str, secret:str, req_code:str=None,
                     redirect:str=None, token:str=None):
         self.uid = uid
@@ -115,14 +115,12 @@ class FT_API(object):
                             "code": self.req_code,
                             "redirect_uri":self.redirect
                         }
-            print("authenticated user!")
         else:
             auth_data = {
                             "grant_type":"client_credentials",
                             "client_id": self.uid,
                             "client_secret": self.secret
                         }
-            print("not authenticated user!")
 
         resp = req.post("https://api.intra.42.fr/oauth/token", data=auth_data)
         resp.raise_for_status()
@@ -134,7 +132,7 @@ class FT_API(object):
     #######################################################
     #                    users                            #
     #######################################################
-    
+
     def users(self, user_id:str=None, **kwargs):
         if user_id:
             target = f"/v2/users/{user_id}"
@@ -142,19 +140,19 @@ class FT_API(object):
             target = "/v2/users"
         return HttpRequest(target, self.session, **kwargs)
 
-    def users_exam(self, user_id:str, **kwargs):
+    def users_exams(self, user_id:str, **kwargs):
         target = f"/v2/users/{user_id}/exams"
         return HttpRequest(target, self.session, **kwargs)
-    
+
     def users_slots(self, user_id:str, **kwargs):
         target = f"/v2/users/{user_id}/slots"
         return HttpRequest(target, self.session, **kwargs)
-    
+
     def users_teams(self, user_id:str, **kwargs):
         target = f"/v2/users/{user_id}/teams"
         #return HttpRequest(target, self.session, **kwargs)
         return self.session()
-    
+
     def users_roles(self, user_id:str, **kwargs):
         target = f"/v2/users/{user_id}/roles"
 
@@ -165,7 +163,7 @@ class FT_API(object):
     def users_titlesUsers(self, user_id:str, **kwargs):
         target = f"/v2/users/{user_id}/titles_users"
         return HttpRequest(target, self.session, **kwargs)
-    
+
     def users_closes(self, user_id:str, **kwargs):
         target = f"/v2/users/{user_id}/closes"
         return HttpRequest(target, self.session, **kwargs)
@@ -226,7 +224,7 @@ class FT_API(object):
 
     def campus_locations(self, campus_id, **kwargs):
         target =f"/v2/campus/{campus_id}/locations"
-        return HttpRequest(target, self.session, **kwargs)    
+        return HttpRequest(target, self.session, **kwargs)
 
     #######################################################
     #                    projects users                   #
@@ -263,7 +261,7 @@ class FT_API(object):
             target = f"/v2/roles_entities/{role_id}"
         else:
             target = "/v2/roles_entities"
-        return HttpRequest(target, self.session, **kwargs)  
+        return HttpRequest(target, self.session, **kwargs)
 
     def roles_rolesEntities(self, role_id:str, **kwargs):
         target = f"/v2/roles/{role_id}/roles_entities"
