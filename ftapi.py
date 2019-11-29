@@ -29,7 +29,7 @@ CAMPUS = '1' # 1 = France 2 = USA .... x = KOREA
 def auth():
     uid = None
     secret = None
-    with open("/Users/jaeslee/auth.txt", 'r') as file:
+    with open("/Users/jaelee/42/api_auth.txt", 'r') as file:
         uid = file.readline()[0:-1]
         secret = file.readline()[0:-1]
     return uid, secret
@@ -46,7 +46,7 @@ class HttpRequest(object):
         if "page" in kwargs:
             self.page = kwargs["page"]
         else:
-            self.page = {"size": 100, "number": 1} #size of page and index of page can be modified
+            self.page = {"size": 100, "number": 1} #MAX size
         if "sort" in kwargs:
             self.sort = kwargs["sort"]
         else:
@@ -62,27 +62,26 @@ class HttpRequest(object):
         parsed_param = filtering + page
         if self.sort:
             parsed_param += f"&sort={self.sort}"
-        print(parsed_param)
         return f"?{parsed_param}"
 
     def get(self):
-        print("url : " + self.url)
         resp = self.session.get(self.url + self.parseParams())
+        print(self.url + self.parseParams())
         resp.raise_for_status()
         return resp.json()
 
     def put(self, data:json):
-       resp = self.session.put(self.url, data=data)
+       resp = self.session.put(self.url, json=data)
        resp.raise_for_status()
        return resp
 
     def post(self, data:json):
         resp = self.session.post(self.url, json=data)
-        # resp.raise_for_status()
+        resp.raise_for_status()
         return resp
 
     def patch(self, data:json):
-        resp = self.session.patch(self.url, data=data)
+        resp = self.session.patch(self.url, json=data)
         resp.raise_for_status()
         return resp
 
@@ -108,6 +107,7 @@ class FT_API(object):
 
     def Authenticate(self):
         if self.req_code:
+            # 3 ledgged authentication
             auth_data = {
                             "grant_type":"authorization_code",
                             "client_id": self.uid,
@@ -116,6 +116,7 @@ class FT_API(object):
                             "redirect_uri":self.redirect
                         }
         else:
+            # 2 ledgged authentication
             auth_data = {
                             "grant_type":"client_credentials",
                             "client_id": self.uid,
@@ -150,9 +151,8 @@ class FT_API(object):
 
     def users_teams(self, user_id:str, **kwargs):
         target = f"/v2/users/{user_id}/teams"
-        #return HttpRequest(target, self.session, **kwargs)
-        return self.session()
-
+        return HttpRequest(target, self.session, **kwargs)
+        
     def users_roles(self, user_id:str, **kwargs):
         target = f"/v2/users/{user_id}/roles"
 
@@ -178,6 +178,10 @@ class FT_API(object):
 
     def users_projectsUsers(self, user_id:str, **kwargs):
         target = f"/v2/users/{user_id}/project_users"
+        return HttpRequest(target, self.session, **kwargs)
+
+    def users_cursusUsers(self, user_id:str, **kwargs):
+        target = f"/v2/users/{user_id}/cursus_users"
         return HttpRequest(target, self.session, **kwargs)
 
     #######################################################
@@ -206,7 +210,7 @@ class FT_API(object):
         target = f"/v2/cursus/{cursus_id}/cursus_users"
         return HttpRequest(target, self.session, **kwargs)
 
-    def cursus_projects(self, cursus_id:str, **kargs):
+    def cursus_projects(self, cursus_id:str, **kwargs):
         target = f"/v2/cursus/{cursus_id}/projects"
         return HttpRequest(target, self.session, **kwargs)
 
@@ -296,12 +300,46 @@ class FT_API(object):
     #                       scales                        #
     #######################################################
 
+    def scales(self, **kwargs):
+        target = "/v2/scales"
+        return HttpRequest(target, self.session, **kwargs)
 
     #######################################################
     #                   scales_teams                      #
     #######################################################
 
+    def users_scaleTeams(self, user_id:str, **kwargs):
+        target = f"/v2/users/{user_id}/scale_teams"
+        return HttpRequest(target, self.session, **kwargs)
+
+    def users_scaleTeams_asCorrector(self, user_id:str, **kwargs):
+        target = f"/v2/users/{user_id}/scale_teams/as_corrector"
+        return HttpRequest(target, self.session, **kwargs)
+
+    def users_scaleTeams_asCorrected(self, user_id:str, **kwargs):
+        target = f"/v2/users/{user_id}/scale_teams/as_corrected"
+        return HttpRequest(target, self.session, **kwargs)
 
     #######################################################
     #                    evaluations                      #
     #######################################################
+
+    def feedbacks(self, feedback_id:str=None, **kwargs):
+        if feedback_id:
+            target = f"/v2/feedbacks/{feedback_id}"
+        else:
+            target = "/v2/feedbacks"
+        return HttpRequest(target, self.session, **kwargs)
+
+    #######################################################
+    #                       teams                         #
+    #######################################################  
+
+        #https://api.intra.42.fr/v2/teams/2894779
+
+    def teams(self, team_id:str=None, **kwargs):
+        if team_id:
+            target = f"/v2/teams/{team_id}"
+        else:
+            target = "/v2/teams"
+        return HttpRequest(target, self.session, **kwargs)
