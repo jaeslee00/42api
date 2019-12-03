@@ -29,7 +29,9 @@ CAMPUS = '1' # 1 = France 2 = USA .... x = KOREA
 def auth():
     uid = None
     secret = None
-    with open("/Users/jaelee/42/api_auth.txt", 'r') as file:
+    #with open("api_auth.txt", 'r') as file:
+    #with open("api_auth.txt", 'r' as file:
+    with open("api_auth.txt", 'r') as file:
         uid = file.readline()[0:-1]
         secret = file.readline()[0:-1]
     return uid, secret
@@ -342,4 +344,20 @@ class FT_API(object):
             target = f"/v2/teams/{team_id}"
         else:
             target = "/v2/teams"
+        return HttpRequest(target, self.session, **kwargs)
+
+    def userCandidatures(self, candid_id:str=None, **kwargs):
+        if candid_id:
+            target = f"/v2/user_candidatures/{candid_id}"
+        else:
+            target = f"/v2/user_candidatures"
+        return HttpRequest(target, self.session, **kwargs)
+    
+    def user_candidatures(self, user_id:str, **kwargs):
+        target = f"/v2/users/{user_id}/user_candidature"
+        return HttpRequest(target, self.session, **kwargs)
+
+    ########################################################
+    def path(self, path:str, **kwargs):
+        target = f"/v2/{path}"
         return HttpRequest(target, self.session, **kwargs)
