@@ -6,11 +6,8 @@ from getopt import gnu_getopt as getopt
 import os
 
 ENDPOINT = 'https://api.intra.42.fr'
-HOST = "localhost"
-PORT = 9090
-REDIR_URI = "http://localhost:9090"
 
-CAMPUS = '1' # 1 = France 2 = USA .... x = KOREA
+CAMPUS = '1' # France = 1, USA = 2 .... KOREA = x
 
 # def get_code(uid:str, secret:str):
 #     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -69,27 +66,27 @@ class HttpRequest(object):
     def get(self):
         resp = self.session.get(self.url + self.parseParams())
         print(self.url + self.parseParams())
-        resp.raise_for_status()
+        #resp.raise_for_status()
         return resp.json()
 
     def put(self, data:json):
        resp = self.session.put(self.url, json=data)
-       resp.raise_for_status()
+       #resp.raise_for_status()
        return resp
 
     def post(self, data:json):
         resp = self.session.post(self.url, json=data)
-        resp.raise_for_status()
+        #resp.raise_for_status()
         return resp
 
     def patch(self, data:json):
         resp = self.session.patch(self.url, json=data)
-        resp.raise_for_status()
+        #resp.raise_for_status()
         return resp
 
     def delete(self):
         resp = self.session.delete(self.url)
-        resp.raise_for_status()
+        #resp.raise_for_status()
         return resp
 
 
@@ -128,7 +125,6 @@ class FT_API(object):
         resp = req.post("https://api.intra.42.fr/oauth/token", data=auth_data)
         resp.raise_for_status()
         parsed_resp = resp.json()
-        print(parsed_resp["access_token"])
         print("expires in:", parsed_resp["expires_in"], "seconds")
         return (parsed_resp["access_token"])
 
@@ -337,14 +333,16 @@ class FT_API(object):
     #                       teams                         #
     #######################################################  
 
-        #https://api.intra.42.fr/v2/teams/2894779
-
     def teams(self, team_id:str=None, **kwargs):
         if team_id:
             target = f"/v2/teams/{team_id}"
         else:
             target = "/v2/teams"
         return HttpRequest(target, self.session, **kwargs)
+
+    #######################################################
+    #                  user_candidatures                  #
+    #######################################################
 
     def userCandidatures(self, candid_id:str=None, **kwargs):
         if candid_id:
@@ -357,7 +355,10 @@ class FT_API(object):
         target = f"/v2/users/{user_id}/user_candidature"
         return HttpRequest(target, self.session, **kwargs)
 
+
+
     ########################################################
+
     def path(self, path:str, **kwargs):
         target = f"/v2/{path}"
         return HttpRequest(target, self.session, **kwargs)
