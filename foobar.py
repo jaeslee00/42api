@@ -15,9 +15,9 @@ for idx, elem in enumerate(data):
     else:
         user_list.append([idx, elem["login"], elem["id"]])
 
-users_projects = []
+users_projects = {}
 for user in user_list:
-    resp = jai.users(user["id"]).get()
+    resp = api.users(user[1]).get()
     sleep(0.5)
     scores = {}
     for p in resp["projects_users"]:
@@ -25,10 +25,10 @@ for user in user_list:
             scores.update({p["project"]["slug"] : p["final_mark"]})
     users_projects.append({"login":resp["login"], "scores" : scores})
 
-list : users_projects
-list : users_feedback
-list : users_diff
-list : users_megatron
+# list : users_projects
+# list : users_feedback
+# list : users_diff
+# list : users_megatron
 
 list : c-piscine(without rush)
 
@@ -40,7 +40,7 @@ for team in teams:
         corrector = scale_team["corrector"]["id"]
         given_mark = scale_team["final_mark"]
         moulinette_mark = team["teams_uploads"][0]["final_mark"]
-        diff = given_mark - moulinette_mark 
+        diff = given_mark - moulinette_mark
 
 {
   "cursus_user": {
