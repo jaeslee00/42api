@@ -73,17 +73,26 @@ class HttpRequest(object):
 
     def put(self, data: json):
         resp = self.session.put(self.url, json=data)
-        resp.raise_for_status()
+        try:
+            resp.raise_for_status()
+        except req.exceptions.HTTPError as e:
+            print(resp.content)
         return resp
 
     def post(self, data: json):
         resp = self.session.post(self.url, json=data)
-        resp.raise_for_status()
+        try:
+            resp.raise_for_status()
+        except req.exceptions.HTTPError as e:
+            print(resp.content)
         return resp
 
     def patch(self, data: json):
         resp = self.session.patch(self.url, json=data)
-        resp.raise_for_status()
+        try:
+            resp.raise_for_status()
+        except req.exceptions.HTTPError as e:
+            print(resp.content)
         return resp
 
     def delete(self):
@@ -362,3 +371,5 @@ class Api(object):
     def path(self, path: str, **kwargs):
         target = f"/v2/{path}"
         return HttpRequest(target, self.session, **kwargs)
+
+        
